@@ -2,14 +2,14 @@ from password_hashing import hash_password,verify_password
 import errors
 
 class Service:
-    async def __init__(self,repo):
+    def __init__(self,repo):
         self.repo = repo
 
     async def signin(self,username: str,password: str):
-        is_exist = self.repo.check_username(username)
+        is_exist =await self.repo.check_username(username)
         if not is_exist:
             hashed_password = hash_password(password)
-            id = self.repo.add_user(username,hashed_password)
+            id = await self.repo.add_user(username,hashed_password)
             return id
         else: 
             raise errors.UserAlreadyExistError()

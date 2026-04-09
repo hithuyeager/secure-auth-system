@@ -5,10 +5,13 @@ class AppError(Exception):
         self.status_code = status_code
 
 class UserNotFoundError(AppError):
-    super().__init__("USER NOT FOUND", 404)
+    def __init__(self):
+        super().__init__("USER NOT FOUND", 404)
 
 class WrongPasswordError(AppError):
-    super().__init__("WRONG PASSWORD",400)
+    def __init__(self):
+        super().__init__("WRONG PASSWORD",400)
 
 class UserAlreadyExistError(AppError):
-    super().__init__("USER ALREADY EXIST",400)
+    def __init__(self):
+        super().__init__("USER ALREADY EXIST",400)
