@@ -2,11 +2,11 @@ from database import pool
 
 
 class Repo:
-    #function to add password into database
-    async def add_password(self,password: str, username: str):
+    #function to add username,password into database
+    async def add_user(self,username: str, password: str):
         async with pool.acquire() as connection:
-            await connection.execute(
-                "INSERT INTO auth_table (username, password) VALUES ($1, $2)",
+            await connection.fetchval(
+                "INSERT INTO auth_table (username, password) VALUES ($1,$2) RETURNING id",
                 username,
                 password
             )
