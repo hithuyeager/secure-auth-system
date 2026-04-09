@@ -12,3 +12,7 @@ async def connect_db():
         max_size = 10
 
     )
+
+async def close_db():
+    if pool:
+        await pool.close()
