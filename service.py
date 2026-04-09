@@ -22,8 +22,8 @@ class Service:
             hashed_password = await self.repo.fetch_password(username)
             is_correct_password = verify_password(password,hashed_password)
             if is_correct_password:
-                return True
+                return await self.repo.get_user_id(username)
             else:
                 raise errors.WrongPasswordError()
         else:
-            raise errors.UserNotFoundError
+            raise errors.UserNotFoundError()

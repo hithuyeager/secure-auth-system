@@ -25,3 +25,7 @@ class Repo:
                 "SELECT COUNT(*) FROM users_auth WHERE username = $1",username
             )
             return result > 0
+    async def get_user_id(self,username: str):
+        async with database.pool.acquire() as connection:
+            id = await connection.fetchval("SELECT id FROM users_auth WHERE username = $1",username)
+            return id
