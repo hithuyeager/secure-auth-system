@@ -30,11 +30,11 @@ class Service:
             raise errors.UserNotFoundError()
         
     async def update_refresh_token(self,user_id: str , refresh_token: str):
-        hashed_refresh_token = await self.repo.get_hashed_refreshed(user_id)
+        hashed_refresh_token = await self.repo.get_hashed_refresh_token(user_id)
         is_token_valid = verify_password(refresh_token,hashed_refresh_token)
         if is_token_valid:
             data = token_rotation(refresh_token)
-            new_refresh_token = data["refresh_token"]
+            new_refresh_token = hash_password(data["refresh_token"])
             updating_new_refresh_token = self.repo.update_refresh_token(user_id,new_refresh_token)
             return data
         else:

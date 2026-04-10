@@ -37,13 +37,13 @@ class Repo:
                                      refresh_token,
                                      user_id
                                      )
-    async def get_hashed_refresh_token(user_id):
+    async def get_hashed_refresh_token(self,user_id):
         async with database.pool.acquire() as connection:
-            hashed_refresh_token = connection.fetchval(" SELECT refresh_token FROM users_auth WHERE id = $1",user_id )
+            hashed_refresh_token = await connection.fetchval(" SELECT refresh_token FROM users_auth WHERE id = $1",user_id )
             return hashed_refresh_token
     async def get_username(self,user_id: str):
         async with database.pool.acquire() as connection:
-            user_name = connection.fetchval("SELECT username FROM users_auth WHERE id = $1",user_id)
+            user_name =await connection.fetchval("SELECT username FROM users_auth WHERE id = $1",user_id)
             return user_name
         
               

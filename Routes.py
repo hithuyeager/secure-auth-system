@@ -2,9 +2,9 @@ from fastapi import APIRouter,Depends,status
 from service import Service
 from depends import get_user_service
 from schemas import User,RefreshRequest
-from jwt_token_manager import get_current_user,oauth2_scheme
+from jwt_token_manager import get_current_user
 from Repository import Repo
-
+from password_hashing import hash_password
 from jwt_token_manager import create_access_token,create_refresh_token
 
 router = APIRouter(prefix="/users")
@@ -22,7 +22,7 @@ async def user_login(user: User,
     id = await service.login(user.username,user.password)
     access_token = create_access_token({"sub" : str(id)})
     refresh_token = create_refresh_token({"sub" : str(id)})
-    await Repo().update_refresh_token(id,refresh_token)
+    await Repo().update_refresh_token(id,hash_password(refresh_token))
     return {
         "access token" : access_token,
         "refresh_token" : refresh_token,
