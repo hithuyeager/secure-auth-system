@@ -35,7 +35,7 @@ class Service:
         if is_token_valid:
             data = token_rotation(refresh_token)
             new_refresh_token = hash_password(data["refresh_token"])
-            updating_new_refresh_token = self.repo.update_refresh_token(user_id,new_refresh_token)
+            updating_new_refresh_token = await self.repo.update_refresh_token(user_id,new_refresh_token)
             return data
         else:
             raise errors.InvalidToken()
