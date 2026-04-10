@@ -1,5 +1,6 @@
 from password_hashing import hash_password,verify_password
 import errors
+from jwt_token_manager import token_rotation
 
 class Service:
     def __init__(self,repo):
@@ -28,3 +29,17 @@ class Service:
                 raise errors.WrongPasswordError()
         else:
             raise errors.UserNotFoundError()
+        
+    async def update_refresh_token(self,user_id: str , refresh_token: str):
+        hashed_refresh_token = await self.repo.get_hashed_refreshed(user_id)
+        is_token_valid = verify_password(refresh_token,hashed_refresh_token)
+        if is_token_valid:
+            data = token_rotation(refresh_token)
+            new_refresh_token = data["refresh_token"]
+            updating_new_refresh_token = self.repo.update_refresh_token(user_id,new_refresh_token)
+            return data
+        else:
+            raise errors.InvalidToken()
+    async def get_username(self,user_id: str):
+        username = await self.repo.get_username(user_id)
+        return username

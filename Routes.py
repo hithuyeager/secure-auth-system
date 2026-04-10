@@ -2,6 +2,7 @@ from fastapi import APIRouter,Depends,status
 from service import Service
 from depends import get_user_service
 from schemas import User
+from jwt_token_manager import get_current_user,oauth2_scheme
 
 from jwt_token_manager import create_access_token,create_refresh_token
 
@@ -25,5 +26,21 @@ async def user_login(user: User,
         "refresh_token" : refresh_token,
         "token-type" : "bearer"
     }
-
+@router.post("/refresh") 
+async def refresh(refresh_token: str = Depends(oauth2_scheme), service: Service = Depends(get_user_service) ,user_id : str = Depends(get_current_user) ):
+    data = await service.update_refresh_token(user_id,refresh_token)
+    return {
+        "access token" : data["access_token"],
+        "refresh_token" : data["refresh_token"],
+        "token-type" : "bearer"
+    }
     
+@router.get("/greetings")
+async def greetings(user_id: str = Depends(get_current_user), service: Service = Depends(get_user_service)):
+    username = await service.get_username(user_id)
+    return {
+        "message" : f"hi {username} , How are you <3"
+    }
+
+
+
