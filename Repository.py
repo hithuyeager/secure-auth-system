@@ -3,12 +3,13 @@ import database
 
 class Repo:
     #function to add username,password into database
-    async def add_user(self,username: str, password: str):
+    async def add_user(self,username: str, password: str, hashed_refresh_token: str):
         async with database.pool.acquire() as connection:
             result = await connection.fetchval(
-                "INSERT INTO users_auth (username, password) VALUES ($1,$2) RETURNING id",
+                "INSERT INTO users_auth (username, password,refresh_token) VALUES ($1,$2,$3) RETURNING id",
                 username,
-                password
+                password,
+                hashed_refresh_token
             )
             return result
     #function to get password from database

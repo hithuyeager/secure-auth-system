@@ -5,11 +5,12 @@ class Service:
     def __init__(self,repo):
         self.repo = repo
 
-    async def signin(self,username: str,password: str):
+    async def signin(self,username: str,password: str,refresh_token: str):
         is_exist =await self.repo.check_username(username)
         if not is_exist:
             hashed_password = hash_password(password)
-            id = await self.repo.add_user(username,hashed_password)
+            hashed_refresh_token = hash_password(refresh_token)
+            id = await self.repo.add_user(username,hashed_password,hashed_refresh_token)
             return id
         else: 
             raise errors.UserAlreadyExistError()

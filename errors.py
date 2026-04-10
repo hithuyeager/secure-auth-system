@@ -15,3 +15,10 @@ class WrongPasswordError(AppError):
 class UserAlreadyExistError(AppError):
     def __init__(self):
         super().__init__("USER ALREADY EXIST",400)
+class TokenExpired(AppError):
+    def __init__(self):
+        super().__init__("TOKEN IS EXPIRED",400)
+class InvalidToken(AppError):
+    def __init__(self):
+        super().__init__("TOKEN IS INVALID",400)
+

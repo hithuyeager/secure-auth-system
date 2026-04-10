@@ -2,6 +2,7 @@ from fastapi import APIRouter,Depends,status
 from service import Service
 from depends import get_user_service
 from schemas import User
+
 from jwt_token_manager import create_access_token,create_refresh_token
 
 router = APIRouter(prefix="/users")
@@ -16,9 +17,9 @@ async def user_signin(user: User,
 async def user_login(user: User,
                      service: Service = Depends(get_user_service)
                      ):
-    id = await service.login(user.username,user.password)
     access_token = create_access_token({"sub" : str(id)})
     refresh_token = create_refresh_token({"sub" : str(id)})
+    id = await service.login(user.username,user.password,refresh_token)
     return {
         "access token" : access_token,
         "refresh_token" : refresh_token,
