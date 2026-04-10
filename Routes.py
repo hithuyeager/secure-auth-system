@@ -1,8 +1,9 @@
 from fastapi import APIRouter,Depends,status
 from service import Service
 from depends import get_user_service
-from schemas import User
+from schemas import User,RefreshRequest
 from jwt_token_manager import get_current_user,oauth2_scheme
+from Repository import Repo
 
 from jwt_token_manager import create_access_token,create_refresh_token
 
@@ -13,22 +14,23 @@ async def user_signin(user: User,
                       service: Service = Depends(get_user_service)
                       ):
     result = await service.signin(user.username,user.password)
-    return result
+    return {"message" : "success"}
 @router.post("/login")
 async def user_login(user: User,
                      service: Service = Depends(get_user_service)
                      ):
+    id = await service.login(user.username,user.password)
     access_token = create_access_token({"sub" : str(id)})
     refresh_token = create_refresh_token({"sub" : str(id)})
-    id = await service.login(user.username,user.password,refresh_token)
+    await Repo().update_refresh_token(id,refresh_token)
     return {
         "access token" : access_token,
         "refresh_token" : refresh_token,
         "token-type" : "bearer"
     }
 @router.post("/refresh") 
-async def refresh(refresh_token: str = Depends(oauth2_scheme), service: Service = Depends(get_user_service) ,user_id : str = Depends(get_current_user) ):
-    data = await service.update_refresh_token(user_id,refresh_token)
+async def refresh(body: RefreshRequest , service: Service = Depends(get_user_service) ,user_id : str = Depends(get_current_user) ):
+    data = await service.update_refresh_token(user_id,body.refresh_token)
     return {
         "access token" : data["access_token"],
         "refresh_token" : data["refresh_token"],
